@@ -13,6 +13,48 @@ This is the official repository for ICLR 2025 paper "[Alignment Data Synthesis f
 - 🤗 [**Magpie Demo**](https://huggingface.co/spaces/davanstrien/magpie) (Thanks a lot for the implementation from @davanstrien!)
 - 🐦 [**Chat with Magpie**](https://huggingface.co/spaces/flydust/Chat-with-Magpie)
 
+
+## 🛠️ Fork Enhancements
+
+This fork introduces two key extensions to MagPie to ensure consistent, reliable annotation, particularly for datasets with significant multi-turn interactions:
+
+### 1. **Template Enforcement**
+
+Original MagPie prompts occasionally produce inconsistent or free-form outputs (e.g., labels such as `VERY POOR` or `[very poor]`), complicating downstream processing. To address this, we:
+
+- Add explicit in-context examples to each prompt.
+- Implement a forgiving, error-tolerant JSON parser.
+- Manually correct remaining formatting inconsistencies.
+
+These enhancements collectively reduce annotation normalization errors by approximately **5–15%**, depending on the annotation category.
+
+### 2. **Multi-Turn Conversation Support**
+
+By default, MagPie evaluates only the initial user-assistant turn, neglecting subsequent conversational context. To accurately handle full multi-turn interactions, we:
+
+- Extend MagPie prompts to ingest complete conversation histories.
+- Fully leverage the 128k-token context window of **Llama-3.3-70B-Instruct**.
+
+These modifications prevent truncation and tagging failures, ensuring accurate annotation of longer dialogues.
+
+---
+
+### 🚀 Running Enhanced Annotation
+
+Launch multi-turn enhanced annotation via:
+
+```bash
+cd scripts
+./unitag_llama_llm.sh "your_dataset.json" [metric] [gpus]
+```
+
+- [metric]: Choose from difficulty, quality, classification, reward, safety, or language.
+Use prefix llm_ (e.g., llm_reward) to enable multi-turn annotation.
+
+- [gpus]: GPU IDs to utilize, e.g., [0,1,2,3,4,5,6,7].
+
+This script runs the enhanced tagging script located at exp/my_unitag.py, which contains all multi-turn adaptations, prompt enhancements, and JSON sanitization improvements.
+
 ## 🐦 News
 - [2025/01/22] Magpie paper is accepted by ICLR 2025! 
 - [2025/01/09] Magpie Reasoning V2 dataset is out! [250K]([https://huggiK](https://huggingface.co/collections/Magpie-Align/magpie-reasoning-datasets-67790a13b91035bc42693885)) from Llama, Skywork-o1 and QwQ! This time, we focus on CoT 🤯
